@@ -1,0 +1,31 @@
+This is a hybrid vector class unifying 2 vector types, a ram-based one, and a
+disk-based one. Defaults are std::vector<T> and stxxl::vector<T>, for ram and disk,
+respectively.
+
+This template class is, for the most part, a ReversibleContainer and Sequence.
+However, the following points disqualify this class from formally being a Container,
+and by extension, a ReversibleContainer:
+* No formal Allocator: the typedef's are there, but allocate() and deallocate() are
+  undefined, as modifying the file allocator to use Allocator semantics would be
+  quite an undertaking. Furthermore, with heterogenous allocator types, the only
+  thing certain about the Allocator is that it would be of little use because the
+  requirement that the memory and disk vector allocators have a compatible
+  interface is non-existent.
+* Allocator vector constructor is undefined: the implementation of such would require
+  the creation of a formal Allocator class. There would also be considerable
+  complexity in designing the constructor to make implications about state
+  invariants.
+* get_allocator is undefined because there is no Allocator.
+
+The following points disqualify this class from formally being a Sequence:
+(Required)
+* No insert(). For the most part, bulk inserts for vector containers are appends,
+  so template <typename InputIterator> append(InputIterator, InputIterator) is
+  implemented.
+* erase() is not implemented. It is a waste of effort to implement a
+  rarely-used function that is slow by definition.
+
+(Optional)
+* at() is not implemented. Use [] instead.
+* push_front(), pop_front() are not implemented. Nothing new here, see std::vector<T>.
+
