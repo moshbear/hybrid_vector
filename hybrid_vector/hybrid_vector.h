@@ -1,32 +1,15 @@
 /* hybrid_vector/hybrid_vector.h - a template hybrid vector class
  * 
  * Author: Andrey Vul
- * Version: r3
+ * Version: r4
  *
  * DO NOT INCLUDE THIS HEADER DIRECTLY!
  *
 ** Copyright (C) 2011, Andrey Vul <andrey@moshbear.net>
- * All rights reserved.
- *  
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *  	* Redistributions of source code must retain the above copyright
- * 		notice, this list of conditions and the following disclaimer.
- *  	* Redistributions in binary form must reproduce the above copyright
- * 		notice, this list of conditions and the following disclaimer in the
- * 		documentation and/or other materials provided with the distribution.
- *       * The names of the contributors may not be used to endorse or promote products
- *        	derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL ANDREY VUL BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
- * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
  */
 
 #ifndef HYBRID_VECTOR_HYBRID_VECTOR_H
@@ -79,7 +62,7 @@ private:
 	typedef hybrid_vector_pmf<T, rv, dv> pmf;
 	size_type size_;
 
-	// The size which triggers a swap to disk on insertions, and to ram on erasures
+	// The size which triggers swap_container
 	size_type swap_size;
 
 	// Forces the use of one container exclusively
@@ -95,9 +78,6 @@ protected:
 		ram = 1,
 		disk = 2,
 	} state;
-
-private:
-
 public:
 	hybrid_vector(size_type n = 0, size_type swap_size_ = 128<<20 /* 128 MB */,
 	              bool force_ram_ = 0, bool force_disk_ = 0) :
@@ -125,7 +105,7 @@ public:
 			force_ram(vec.force_ram),
 			force_disk(vec.force_disk),
 			state(vec.state) {
-		check_consistency();
+		vec.check_consistency();
 		switch (state) {
 		case ram:
 			p_rv.reset(new rv(*vec.p_rv));
@@ -179,6 +159,8 @@ public:
 	}
 
 // HYBRID_VECTOR Vector's Member Function CALL
+// Note: abuse of variadic arguments here causes warnings to be generated at maximum level
+// E.g. g++-4.4 -Wall -ansi pedantic
 #define HYBRID_VECTOR_VMF_CALL(__Func, ... /* return, etc */) \
 	do { \
 		switch (state) { \
@@ -261,14 +243,13 @@ public:
 
 	template <typename InIt>
 	void assign(InIt _Start, InIt _End) {
-		consistency_check();
+		check_consistency();
 		typename pmf::dv_size_type n_ = std::distance(_Start, _End);
 		size_type n = real_size(n_);
 		if (n > swap_size)
 			use_disk(); // safe: does nothing if force_ram is set
 		else
 			use_ram(); // safe: does nothing if force_disk is set
-		HYBRID_VECTOR_VMF_CALL(reserve(n));
 		HYBRID_VECTOR_VMF_CALL(assign(_Start, _End));
 		size_ = n;
 	}
@@ -276,14 +257,12 @@ public:
 	// hybrid_vector-specific member function
 	template <typename InIt>
 	void append(InIt _Start, InIt _End) {
-		consistency_check();
-		typename pmf::dv_size_type n_ = std::distance(_Start, _End);
-		size_type n = real_size(n_ + size_);
+		check_consistency();
+		size_type n = real_size(std::distance(_Start, _End) + size_);
 		if (n > swap_size)
 			use_disk(); // safe: does nothing if force_ram is set
 		else
 			use_ram(); // safe: does nothing if force_disk is set
-		HYBRID_VECTOR_VMF_CALL(reserve(n));
 		HYBRID_VECTOR_VMF_CALL(bulk_append(_Start, _End));
 	}
 
@@ -381,17 +360,17 @@ protected:
 	template <typename InIt>
 	void dv_assign(InIt _Start, InIt _End) {
 		dv_clear();
-		typename pmf::dv_size_type n = std::distance(_Start, _End);
-		(*p_dv).template set_content(_Start, _End, n);
+		(*p_dv).template set_content(_Start, _End, std::distance(_Start, _End));
 	}
 	
-	// the following functions are specific to hybrid_vector
 	template <typename InIt>
 	void rv_bulk_append(InIt _Start, InIt  _End) {
+		rv_reserve(rv_size() + std::distance(_Start, _End));
 		(*p_rv).template insert(p_rv->end(), _Start, _End);
 	}
 	template <typename InIt>
 	void dv_bulk_append(InIt _Start, InIt _End) {
+		dv_reserve(dv_size() + std::distance(_Start, _End));
 		std::for_each(_Start, _End, boost::bind(&dv_push_back, _1));
 	}
 

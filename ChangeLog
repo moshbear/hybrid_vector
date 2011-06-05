@@ -1,3 +1,4 @@
+r4 2011-05-05 changed to boost license
 r3 2011-05-31 major interface redesign
 r2 2011-05-26 functor used for copying in swap_containers()
 r1 2011-05-23 initial version

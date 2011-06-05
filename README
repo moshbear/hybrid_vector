@@ -22,10 +22,10 @@ The following points disqualify this class from formally being a Sequence:
 * No insert(). For the most part, bulk inserts for vector containers are appends,
   so template <typename InputIterator> append(InputIterator, InputIterator) is
   implemented.
-* erase() is not implemented. It is a waste of effort to implement a
-  rarely-used function that is slow by definition.
+* erase() is not implemented. Too much overhead.
 
 (Optional)
 * at() is not implemented. Use [] instead.
 * push_front(), pop_front() are not implemented. Nothing new here, see std::vector<T>.
 
+Library requirements: Boost.

@@ -1,3 +1,10 @@
+/* hybrid_vector/c99int.h - C99 int types
+ *
+ * Author: Andrey Vul
+ * Version: r4
+ *
+ * This file is public domain.
+ */
 #ifndef HYBRID_VECTOR_C99INT_H
 #define HYBRID_VECTOR_C99INT_H
 /*!
