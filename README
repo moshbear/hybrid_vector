@@ -19,13 +19,12 @@ and by extension, a ReversibleContainer:
 
 The following points disqualify this class from formally being a Sequence:
 (Required)
-* No insert(). For the most part, bulk inserts for vector containers are appends,
-  so template <typename InputIterator> append(InputIterator, InputIterator) is
-  implemented.
-* erase() is not implemented. Too much overhead.
+* insert() is limited to doing appends.
+* erase() is not implemented.
 
 (Optional)
 * at() is not implemented. Use [] instead.
 * push_front(), pop_front() are not implemented. Nothing new here, see std::vector<T>.
 
 Library requirements: Boost.
+

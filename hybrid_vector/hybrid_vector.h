@@ -266,6 +266,14 @@ public:
 		HYBRID_VECTOR_VMF_CALL(bulk_append(_Start, _End));
 	}
 
+	// insert
+	// WARNING: wrapper for append
+	template <typename InIt>
+	void insert(iterator pos, Init _Start, InIt _End) {
+		BOOST_ASSERT(pos == end());
+		append(_Start, _End);
+	}
+
 #undef HYBRID_VECTOR_VMF_CALL
 
 	~hybrid_vector() {
