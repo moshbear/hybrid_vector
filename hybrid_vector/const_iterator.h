@@ -56,113 +56,113 @@ public:
 	hybrid_vector_const_iterator(const const_iterator& it) :
 			parent(it.parent), off(it.off) { }
 	
-	difference_type operator-(const iterator& it) const {
+	difference_type operator - (const iterator& it) const {
 		return off - it.off;
 	}
-	difference_type operator-(const const_iterator& it) const {
+	difference_type operator - (const const_iterator& it) const {
 		return off - it.off;
 	}
 
-	this_type operator-(size_type n) const {
+	this_type operator - (size_type n) const {
 		return this_type(parent, off - n);
 	}
 
-	this_type operator+(size_type n) const {
+	this_type operator + (size_type n) const {
 		return this_type(parent, off + n);
 	}
 
-	this_type& operator-=(size_type n) {
+	this_type& operator -= (size_type n) {
 		off -= n;
 		return *this;
 	}
 
-	this_type& operator+=(size_type n) {
+	this_type& operator += (size_type n) {
 		off += n;
 		return *this;
 	}
 
-	const_reference operator*() const {
+	const_reference operator * () const {
 		return (*parent)[off];
 	}
 
-	const_pointer operator->() {
+	const_pointer operator -> () {
 		return &((*parent)[off]);
 	}
 
-	const_reference operator[](size_type n) {
+	const_reference operator [] (size_type n) {
 		return (*parent)[off + n];
 	}
 
-	this_type& operator++() {
+	this_type& operator ++ () {
 		++off;
 		return *this;
 	}
-	this_type& operator++(int) {
+	this_type& operator ++ (int) {
 		this_type tmp = *this;
 		++off;
 		return tmp;
 	}
 
-	this_type& operator--() {
+	this_type& operator -- () {
 		--off;
 		return *this;
 	}
-	this_type& operator--(int) {
+	this_type& operator -- (int) {
 		iterator tmp = *this;
 		--off;
 		return tmp;
 	}
 
-	bool operator==(const iterator& it) const {
+	bool operator == (const iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off == it.off;
 	}
-	bool operator==(const const_iterator& it) const {
+	bool operator == (const const_iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off == it.off;
 	}
 
-	bool operator!=(const iterator& it) const {
+	bool operator != (const iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off != it.off;
 	}
-	bool operator!=(const const_iterator& it) const {
+	bool operator != (const const_iterator& it) const {
 		BOOSST_ASSERT(parent == it.parent);
 		return off != it.off;
 	}
 
-	bool operator<(const iterator& it) const {
+	bool operator < (const iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off < it.off;
 	}
-	bool operator<(const const_iterator& it) const {
+	bool operator < (const const_iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off < it.off;
 	}
 
-	bool operator<=(const iterator& it) const {
+	bool operator <= (const iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off <= it.off;
 	}
-	bool operator<=(const const_iterator& it) const {
+	bool operator <= (const const_iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off <= it.off;
 	}
 
-	bool operator>(const iterator& it) const {
+	bool operator > (const iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off > it.off;
 	}
-	bool operator>(const const_iterator& it) const {
+	bool operator > (const const_iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off > it.off;
 	}
 
-	bool operator>=(const iterator& it) const {
+	bool operator >= (const iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off >= it.off;
 	}
-	bool operator>=(const const_iterator& it) const {
+	bool operator >= (const const_iterator& it) const {
 		BOOST_ASSERT(parent == it.parent);
 		return off >= it.off;
 	}

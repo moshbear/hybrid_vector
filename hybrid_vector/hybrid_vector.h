@@ -1,7 +1,7 @@
 /* hybrid_vector/hybrid_vector.h - a template hybrid vector class
  * 
  * Author: Andrey Vul
- * Version: r4
+ * Version: r5
  *
  * DO NOT INCLUDE THIS HEADER DIRECTLY!
  *
@@ -118,7 +118,7 @@ public:
 		}
 	}
 
-	hybrid_vector& operator=(const hybrid_vector& vec) {
+	hybrid_vector& operator = (const hybrid_vector& vec) {
 		if (this != &vec) {
 			hybrid_vector tmp(vec);
 			swap(tmp);
@@ -269,7 +269,7 @@ public:
 	// insert
 	// WARNING: wrapper for append
 	template <typename InIt>
-	void insert(iterator pos, Init _Start, InIt _End) {
+	void insert(iterator pos, InIt _Start, InIt _End) {
 		BOOST_ASSERT(pos == end());
 		append(_Start, _End);
 	}
@@ -476,6 +476,43 @@ void hybrid_vector<T, rv, dv>::swap_containers(signed char direction)
 		rv_assign(p_dv->begin(), p_dv->end());
 		p_dv.reset();
 		state = ram;
+	}
+}
+
+template <typename T, typename rv, typename dv>
+inline bool operator == (const hybrid_vector<T, rv, dv>& v1, const hybrid_vector<T, rv, dv>& v2) {
+	return (v1.size() == v2.size()) && std::equal(v1.begin(), v1.end(), v2.begin());
+}
+
+template <typename T, typename rv, typename dv>
+inline bool operator != (const hybrid_vector<T, rv, dv>& v1, const hybrid_vector<T, rv, dv>& v2) {
+	return !(v1 == v2);
+}
+
+template <typename T, typename rv, typename dv>
+inline bool operator < (const hybrid_vector<T, rv, dv>& v1, const hybrid_vector<T, rv, dv>& v2) {
+	return std::lexicographical_compare(v1.begin(), v1.end(), v2.begin(), v2.end());
+}
+
+template <typename T, typename rv, typename dv>
+inline bool operator > (const hybrid_vector<T, rv, dv>& v1, const hybrid_vector<T, rv, dv>& v2) {
+	return v2 < v1;
+}
+
+template <typename T, typename rv, typename dv>
+inline bool operator <= (const hybrid_vector<T, rv, dv>& v1, const hybrid_vector<T, rv, dv>& v2) {
+	return !(v2 < v1);
+} 
+
+template <typename T, typename rv, typename dv>
+inline bool operator >= (const hybrid_vector<T, rv, dv>& v1, const hybrid_vector<T, rv, dv>& v2) {
+	return !(v1 < v2);
+}
+
+namespace std {
+	template <typename T, typename rv, typename dv>
+	void swap(hybrid_vector<T, rv, dv>& v1, hybrid_vector<T, rv, dv>& v2) {
+		v1.swap(v2);
 	}
 }
 
